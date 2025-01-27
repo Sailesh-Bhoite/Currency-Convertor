@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Currency Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #39ff14, #fff700);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .converter-container {
+            background: white;
+            padding: 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        input, select, button {
+            width: 270px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #ff7e5f;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #feb47b;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+        strong {
+            background: yellow;
+            padding: 10px 50px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="converter-container">
+        <h1>Currency Converter</h1>
+        <form id="convertForm" method="post" action="{% url 'index' %}">
+            {% csrf_token %}
+            <input type="number" name="amount" placeholder="Enter amount" required>
+
+            <select name="from" required>
+                <option value="" disabled {% if not from_currency %}selected{% endif %}>Select from currency</option>
+                <option value="AUD" {% if from_currency == 'AUD' %}selected{% endif %}>Australian Dollar</option>
+                <option value="BGN" {% if from_currency == 'BGN' %}selected{% endif %}>Bulgarian Lev</option>
+                <option value="BRL" {% if from_currency == 'BRL' %}selected{% endif %}>Brazilian Real</option>
+                <option value="CAD" {% if from_currency == 'CAD' %}selected{% endif %}>Canadian Dollar</option>
+                <option value="CHF" {% if from_currency == 'CHF' %}selected{% endif %}>Swiss Franc</option>
+                <option value="CNY" {% if from_currency == 'CNY' %}selected{% endif %}>Chinese Renminbi Yuan</option>
+                <option value="CZK" {% if from_currency == 'CZK' %}selected{% endif %}>Czech Koruna</option>
+                <option value="DKK" {% if from_currency == 'DKK' %}selected{% endif %}>Danish Krone</option>
+                <option value="EUR" {% if from_currency == 'EUR' %}selected{% endif %}>Euro</option>
+                <option value="GBP" {% if from_currency == 'GBP' %}selected{% endif %}>British Pound</option>
+                <option value="HKD" {% if from_currency == 'HKD' %}selected{% endif %}>Hong Kong Dollar</option>
+                <option value="HUF" {% if from_currency == 'HUF' %}selected{% endif %}>Hungarian Forint</option>
+                <option value="IDR" {% if from_currency == 'IDR' %}selected{% endif %}>Indonesian Rupiah</option>
+                <option value="ILS" {% if from_currency == 'ILS' %}selected{% endif %}>Israeli New Sheqel</option>
+                <option value="INR" {% if from_currency == 'INR' %}selected{% endif %}>Indian Rupee</option>
+                <option value="ISK" {% if from_currency == 'ISK' %}selected{% endif %}>Icelandic Króna</option>
+                <option value="JPY" {% if from_currency == 'JPY' %}selected{% endif %}>Japanese Yen</option>
+                <option value="KRW" {% if from_currency == 'KRW' %}selected{% endif %}>South Korean Won</option>
+                <option value="MXN" {% if from_currency == 'MXN' %}selected{% endif %}>Mexican Peso</option>
+                <option value="MYR" {% if from_currency == 'MYR' %}selected{% endif %}>Malaysian Ringgit</option>
+                <option value="NOK" {% if from_currency == 'NOK' %}selected{% endif %}>Norwegian Krone</option>
+                <option value="NZD" {% if from_currency == 'NZD' %}selected{% endif %}>New Zealand Dollar</option>
+                <option value="PHP" {% if from_currency == 'PHP' %}selected{% endif %}>Philippine Peso</option>
+                <option value="PLN" {% if from_currency == 'PLN' %}selected{% endif %}>Polish Złoty</option>
+                <option value="RON" {% if from_currency == 'RON' %}selected{% endif %}>Romanian Leu</option>
+                <option value="SEK" {% if from_currency == 'SEK' %}selected{% endif %}>Swedish Krona</option>
+                <option value="SGD" {% if from_currency == 'SGD' %}selected{% endif %}>Singapore Dollar</option>
+                <option value="THB" {% if from_currency == 'THB' %}selected{% endif %}>Thai Baht</option>
+                <option value="TRY" {% if from_currency == 'TRY' %}selected{% endif %}>Turkish Lira</option>
+                <option value="USD" {% if from_currency == 'USD' %}selected{% endif %}>United States Dollar</option>
+                <option value="ZAR" {% if from_currency == 'ZAR' %}selected{% endif %}>South</option>
+            </select>
+
+            <select name="to" required>
+                <option value="" disabled {% if not from_currency %}selected{% endif %}>Select from currency</option>
+                <option value="AUD" {% if to_currency == 'AUD' %}selected{% endif %}>Australian Dollar</option>
+                <option value="BGN" {% if to_currency == 'BGN' %}selected{% endif %}>Bulgarian Lev</option>
+                <option value="BRL" {% if to_currency == 'BRL' %}selected{% endif %}>Brazilian Real</option>
+                <option value="CAD" {% if to_currency == 'CAD' %}selected{% endif %}>Canadian Dollar</option>
+                <option value="CHF" {% if to_currency == 'CHF' %}selected{% endif %}>Swiss Franc</option>
+                <option value="CNY" {% if to_currency == 'CNY' %}selected{% endif %}>Chinese Renminbi Yuan</option>
+                <option value="CZK" {% if to_currency == 'CZK' %}selected{% endif %}>Czech Koruna</option>
+                <option value="DKK" {% if to_currency == 'DKK' %}selected{% endif %}>Danish Krone</option>
+                <option value="EUR" {% if to_currency == 'EUR' %}selected{% endif %}>Euro</option>
+                <option value="GBP" {% if to_currency == 'GBP' %}selected{% endif %}>British Pound</option>
+                <option value="HKD" {% if to_currency == 'HKD' %}selected{% endif %}>Hong Kong Dollar</option>
+                <option value="HUF" {% if to_currency == 'HUF' %}selected{% endif %}>Hungarian Forint</option>
+                <option value="IDR" {% if to_currency == 'IDR' %}selected{% endif %}>Indonesian Rupiah</option>
+                <option value="ILS" {% if to_currency == 'ILS' %}selected{% endif %}>Israeli New Sheqel</option>
+                <option value="INR" {% if to_currency == 'INR' %}selected{% endif %}>Indian Rupee</option>
+                <option value="ISK" {% if to_currency == 'ISK' %}selected{% endif %}>Icelandic Króna</option>
+                <option value="JPY" {% if to_currency == 'JPY' %}selected{% endif %}>Japanese Yen</option>
+                <option value="KRW" {% if to_currency == 'KRW' %}selected{% endif %}>South Korean Won</option>
+                <option value="MXN" {% if to_currency == 'MXN' %}selected{% endif %}>Mexican Peso</option>
+                <option value="MYR" {% if to_currency == 'MYR' %}selected{% endif %}>Malaysian Ringgit</option>
+                <option value="NOK" {% if to_currency == 'NOK' %}selected{% endif %}>Norwegian Krone</option>
+                <option value="NZD" {% if to_currency == 'NZD' %}selected{% endif %}>New Zealand Dollar</option>
+                <option value="PHP" {% if to_currency == 'PHP' %}selected{% endif %}>Philippine Peso</option>
+                <option value="PLN" {% if to_currency == 'PLN' %}selected{% endif %}>Polish Złoty</option>
+                <option value="RON" {% if to_currency == 'RON' %}selected{% endif %}>Romanian Leu</option>
+                <option value="SEK" {% if to_currency == 'SEK' %}selected{% endif %}>Swedish Krona</option>
+                <option value="SGD" {% if to_currency == 'SGD' %}selected{% endif %}>Singapore Dollar</option>
+                <option value="THB" {% if to_currency == 'THB' %}selected{% endif %}>Thai Baht</option>
+                <option value="TRY" {% if to_currency == 'TRY' %}selected{% endif %}>Turkish Lira</option>
+                <option value="USD" {% if to_currency == 'USD' %}selected{% endif %}>United States Dollar</option>
+                <option value="ZAR" {% if to_currency == 'ZAR' %}selected{% endif %}>South</option>
+            </select>
+
+            <button type="submit">Convert</button>
+        </form>
+        {% if to_amount %}
+            <div id="result">
+                <strong>{{ from_amount }} {{ from_currency }} = {{ to_amount }} {{ to_currency }}</strong>
+            </div>
+        {% endif %}
+    </div>
+
+
+</body>
+</html>
